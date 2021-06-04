@@ -1,13 +1,13 @@
 <template>
   <div id='nowplaying'>
     <ul>
-      <li v-for='item in filmlists' :key='item.filmId'>
-        <div><img :src="item.poster" alt=""></div>
+      <li v-for='item in nowplaying_filmlists' :key='item.id'>
+        <div><img :src="item.img | setWH('/100.200/')" alt=""></div>
         <ul class='nowplaying-info'>
-          <li>{{item.name}} <span>{{item.filmType.name}}</span></li>
-          <li>观众评分 {{item.grade}}</li>
-          <li>主演：{{item.actors | actorsFilter}}</li>
-          <li>{{item.nation}} | {{item.runtime}}分钟</li>
+          <li>{{item.nm}} <span>{{item.version}}</span></li>
+          <li>观众评分 {{item.sc}}</li>
+          <li>主演：{{item.star}}</li>
+          <li> {{item.showInfo}}</li>
         </ul>
         <div class='nowplaying-ticket'>
           <div>购 票</div>
@@ -18,30 +18,49 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import axios from 'axios'
-Vue.filter('actorsFilter', function (actor) {
-  return actor.map((item) => item.name).join(' ')
-})
+// 一般方式添加组件
+// import Vue from 'vue'
+// import axios from 'axios'
+// Vue.filter('actorsFilter', function (actor) {
+//   return actor.map((item) => item.name).join(' ')
+// })
+// 可以做一个全局的过滤器，放在main.js文件中
+// export default {
+//   data() {
+//     return {
+//       filmlists: []
+//     }
+//   },
+// mounted() {
+// 如果无法配置反向代理，则获取数据的形式如下：
+// this.axios({
+//   url:
+//     'https://m.maizuo.com/gateway?cityId=440300&pageNum=1&pageSize=10&type=1&k=2464696',
+//   headers: {
+//     'X-Client-Info':
+//       '{"a":"3000","ch":"1002","v":"5.0.4","e":"16218339231241331447889921"}',
+//     'X-Host': 'mall.film-ticket.film.list'
+//   }
+// }).then((res) => {
+//   console.log(res.data.data.films)
+//   this.filmlists = res.data.data.films
+// })
+// 如果已配置反向代理，则获取数据的形式如下：
+// this.axios.get('/ajax/movieOnInfoList?token=').then((res) => {
+//   console.log(res.data.movieList)
+//   this.filmlists = res.data.movieList
+// })
+// }
+// }
+
+// 通过store方式添加组件
+import { mapState } from 'vuex'
 export default {
-  data() {
-    return {
-      filmlists: []
-    }
-  },
   mounted() {
-    axios({
-      url:
-        'https://m.maizuo.com/gateway?cityId=440300&pageNum=1&pageSize=10&type=1&k=2464696',
-      headers: {
-        'X-Client-Info':
-          '{"a":"3000","ch":"1002","v":"5.0.4","e":"16218339231241331447889921"}',
-        'X-Host': 'mall.film-ticket.film.list'
-      }
-    }).then((res) => {
-      console.log(res.data.data.films)
-      this.filmlists = res.data.data.films
-    })
+    this.$store.dispatch('nowplayingAction')
+  },
+  computed: {
+    ...mapState(['nowplaying_filmlists'])
   }
 }
 </script>
