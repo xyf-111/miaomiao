@@ -1,6 +1,8 @@
 <template>
   <div id='header'>
-    <h2>{{title}}</h2>
+    <div class='header'>
+      <h2>{{title}}</h2>
+    </div>
   </div>
 </template>
 
@@ -19,11 +21,18 @@ export default {
 
 <style lang="scss" scoped>
 #header {
+  position: relative;
   width: 100%;
   height: 50px;
-  line-height: 50px;
-  background: red;
-  color: white;
-  text-align: center;
+  .header {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    background: red;
+    color: white;
+    text-align: center;
+    position: fixed;
+    top: 0;
+  }
 }
 </style>
