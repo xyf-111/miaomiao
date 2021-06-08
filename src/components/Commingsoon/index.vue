@@ -1,54 +1,140 @@
 <template>
-  <div id='nowplaying'>
-    <ul>
-      <li v-for='item in filmlists' :key='item.filmId'>
-        <div><img :src="item.poster" alt=""></div>
-        <ul class='nowplaying-info'>
-          <li>{{item.name}} <span>{{item.filmType.name}}</span></li>
-          <li>观众评分 {{item.grade}}</li>
-          <li>主演：{{item.actors | actorsFilter}}</li>
-          <li>{{item.nation}} | {{item.runtime}}分钟</li>
-        </ul>
-        <div class='nowplaying-ticket'>
-          <div>预 购</div>
-        </div>
-      </li>
-    </ul>
+  <div id='film_nowplaying' ref='film_nowplaying'>
+    <Loading v-if='isLoading'> </Loading>
+    <Scroll v-else :handleScoll='handleScoll' :handleTouch='handleTouch'>
+      <ul id='nowplaying'>
+        <li v-if="pullDowmMsg" style='height:30px' :style="'color:'+(isColor?'red':'green')">{{pullDowmMsg}}</li>
+        <li v-for='item in filmlists' :key='item.filmId' @click='handleToDetail'>
+          <div><img :src="item.poster" alt=""></div>
+          <ul class='nowplaying-info'>
+            <li>{{item.name}} <span>{{item.filmType.name}}</span></li>
+            <li>观众评分 {{item.grade}}</li>
+            <li>主演：{{item.actors | actorsFilter}}</li>
+            <li>{{item.nation}} | {{item.runtime}}分钟</li>
+          </ul>
+          <div class='nowplaying-ticket'>
+            <div>预 购</div>
+          </div>
+        </li>
+      </ul>
+    </Scroll>
   </div>
 </template>
-
 <script>
 import Vue from 'vue'
-import axios from 'axios'
+// import axios from 'axios'
+// 在入口文件统一引入axios，使用时要加this
+// import BScroll from 'better-scroll'
 Vue.filter('actorsFilter', function (actor) {
   return actor.map((item) => item.name).join(' ')
 })
 export default {
+  name: 'Commingsoon',
   data() {
     return {
-      filmlists: []
+      filmlists: [],
+      pullDowmMsg: '',
+      isColor: true,
+      pageNum: 1,
+      isLoading: true,
+      prevId: -1
     }
   },
-  mounted() {
-    axios({
-      url:
-        'https://m.maizuo.com/gateway?cityId=440300&pageNum=1&pageSize=10&type=2&k=3245487',
-      headers: {
-        'X-Client-Info':
-          '{"a":"3000","ch":"1002","v":"5.0.4","e":"16218339231241331447889921"}',
-        'X-Host': 'mall.film-ticket.film.list'
+  activated() {
+    this.$store.commit('noActiveMutation', false)
+    var cityId = this.$store.state.city.id
+    if (this.prevId === cityId) {
+      console.log('不渲染commingsoon数据', cityId, this.prevId)
+      return
+    } else {
+      console.log('重新渲染commingsoon数据', cityId, this.prevId)
+      this.axios({
+        url: `https://m.maizuo.com/gateway?cityId=${cityId}&pageNum=1&pageSize=10&type=2&k=3245487`,
+        headers: {
+          'X-Client-Info':
+            '{"a":"3000","ch":"1002","v":"5.0.4","e":"16218339231241331447889921"}',
+          'X-Host': 'mall.film-ticket.film.list'
+        }
+      }).then((res) => {
+        console.log(res.data.data.films)
+        this.filmlists = res.data.data.films
+        this.isLoading = false
+        this.prevId = cityId
+        //除了下述设置scoll外，还可以封装成组件使用
+        // this.$nextTick(() => {
+        //   var Scroll = new BScroll(this.$refs.film_nowplaying, {
+        //     tap: true,
+        //     click: true,
+        //     probeType: 1
+        //   })
+        //   Scroll.on('scroll', (pos) => {
+        //     if (pos.y > 30) {
+        //       console.log(this.pageNum)
+        //       if (this.pageNum === 3) {
+        //         this.pullDowmMsg = '没有可更新的内容!!!'
+        //         this.isColor = true
+        //         return
+        //       }
+        //       this.pullDowmMsg = '正在更新中......'
+        //       this.isColor = true
+        //     }
+        //   })
+        //   Scroll.on('touchEnd', (pos) => {
+        //     if (pos.y > 30) {
+        //       if (this.pageNum > 2) {
+        //         this.pullDowmMsg = ''
+        //         return
+        //       } else {
+        //         this.pageNum++
+        //       }
+        //       this.axios({
+        //         url: `https://m.maizuo.com/gateway?cityId=440300&pageNum=${this.pageNum}&pageSize=10&type=2&k=3245487`,
+        //         headers: {
+        //           'X-Client-Info':
+        //             '{"a":"3000","ch":"1002","v":"5.0.4","e":"16218339231241331447889921"}',
+        //           'X-Host': 'mall.film-ticket.film.list'
+        //         }
+        //       }).then((res) => {
+        //         this.isColor = false
+        //         this.pullDowmMsg = '更新成功！！！'
+        //         setTimeout(() => {
+        //           this.filmlists = res.data.data.films
+        //           this.pullDowmMsg = ''
+        //         }, 1000)
+        //       })
+        //     }
+        //   })
+        // })
+      })
+    }
+  },
+  methods: {
+    handleToDetail() {
+      console.log('handleToDetail')
+    },
+    handleScoll(pos) {
+      if (pos.y > 30) {
+        this.pullDowmMsg = '正在更新中......'
+        this.isColor = true
       }
-    }).then((res) => {
-      console.log(res.data.data.films)
-      this.filmlists = res.data.data.films
-    })
+    },
+    handleTouch(pos) {
+      if (pos.y > 30) {
+        this.isColor = false
+        this.pullDowmMsg = '更新成功！！！'
+        setTimeout(() => {
+          this.pullDowmMsg = ''
+        }, 500)
+      }
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-#nowplaying {
-  ul {
+#film_nowplaying {
+  height: 500px;
+  #nowplaying {
     width: 100%;
     li {
       display: flex;
@@ -59,10 +145,10 @@ export default {
       div {
         width: 30%;
         &:first-child {
-          width: 40%;
+          width: 80px;
         }
         img {
-          width: 100%;
+          width: 80px;
           height: 100%;
         }
       }
@@ -79,9 +165,9 @@ export default {
           font-size: 14px;
           color: #666;
           &:first-child {
-            font-size: 16px;
+            font-size: 18px;
             color: black;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             font-weight: bold;
             span {
               background: lightgray;
@@ -101,6 +187,7 @@ export default {
       }
       .nowplaying-ticket {
         display: flex;
+        width: 50px;
         div {
           width: 50px;
           margin: auto;
