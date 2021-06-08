@@ -4,15 +4,16 @@
     <Scroll v-else :handleScoll='handleScoll' :handleTouch='handleTouch'>
       <ul id='nowplaying'>
         <li v-if="pullDowmMsg" style='height:30px' :style="'color:'+(isColor?'red':'green')">{{pullDowmMsg}}</li>
-        <li v-for='item in filmlists' :key='item.filmId' @click='handleToDetail'>
-          <div><img :src="item.poster" alt=""></div>
+        <li v-for='item in filmlists' :key='item.filmId'>
+          <div><img :src="item.poster" alt="" @touchstart=' handleToDetail(item.filmId)'>
+          </div>
           <ul class='nowplaying-info'>
-            <li>{{item.name}} <span>{{item.filmType.name}}</span></li>
+            <li @touchstart='handleToDetail(item.filmId)'>{{item.name}} <span>{{item.filmType.name}}</span></li>
             <li>观众评分 {{item.grade}}</li>
             <li>主演：{{item.actors | actorsFilter}}</li>
             <li>{{item.nation}} | {{item.runtime}}分钟</li>
           </ul>
-          <div class='nowplaying-ticket'>
+          <div class=' nowplaying-ticket'>
             <div>预 购</div>
           </div>
         </li>
@@ -109,8 +110,9 @@ export default {
     }
   },
   methods: {
-    handleToDetail() {
-      console.log('handleToDetail')
+    handleToDetail(filmId) {
+      console.log('点击进入电影详情页,电影ID：' + filmId)
+      this.$router.push('/movie/detail/commingsoon/' + filmId)
     },
     handleScoll(pos) {
       if (pos.y > 30) {

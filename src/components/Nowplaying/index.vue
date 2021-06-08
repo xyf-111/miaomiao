@@ -4,11 +4,11 @@
     <Scroll c-else :handleScoll='handleScoll' :handleTouch='handleTouch'>
       <ul id='nowplaying'>
         <li v-if='pullDownMsg' style='height:30px' :style="'color:'+(isColor?'red':'green')">{{pullDownMsg}}</li>
-        <li v-for='item in nowplaying_filmlists' :key='item.filmId' @click='handleToDetail'>
+        <li v-for='item in nowplaying_filmlists' :key='item.filmId'>
           <!-- 为什么这里换成tap以后并不生效呢 -->
-          <div><img :src="item.poster" alt=""></div>
+          <div><img :src="item.poster" alt="" @touchstart='handleToDetail(item.filmId)'></div>
           <ul class='nowplaying-info'>
-            <li>{{item.name}} <span>{{item.item.name}}</span></li>
+            <li @touchstart='handleToDetail(item.filmId)'>{{item.name}} <span>{{item.item.name}}</span></li>
             <li>观众评分 {{item.grade}}</li>
             <li>主演：{{  item.actors.map((item)=>item.name).join(' ')  }}</li>
           </ul>
@@ -117,8 +117,9 @@ export default {
     ...mapState(['nowplaying_filmlists', 'pullDownMsg', 'isColor', 'isLoading'])
   },
   methods: {
-    handleToDetail() {
-      console.log('渲染电影详情页')
+    handleToDetail(filmId) {
+      console.log('点击进入电影详情页,电影ID：' + filmId)
+      this.$router.push('/movie/detail/nowplaying/' + filmId)
     },
     handleScoll(pos) {
       if (pos.y > 30) {
