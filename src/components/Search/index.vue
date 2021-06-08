@@ -52,9 +52,15 @@
 </template>
 
 <script>
+import Vue from 'vue'
+import MintUI from 'mint-ui'
+import 'mint-ui/lib/style.css'
+Vue.use(MintUI)
 import { mapState } from 'vuex'
 export default {
-  mounted() {
+  name: 'Search',
+  activated() {
+    this.$store.commit('noActiveMutation', false)
     this.$store.dispatch('searchAction')
   },
   data() {

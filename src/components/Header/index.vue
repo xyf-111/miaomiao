@@ -24,6 +24,7 @@ export default {
   position: relative;
   width: 100%;
   height: 50px;
+  z-index: 2;
   .header {
     width: 100%;
     height: 50px;

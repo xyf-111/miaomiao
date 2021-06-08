@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <!-- 为了避免每次切换路由时重新渲染页面影响效果，加上<keep-alive>后让路由先缓存-->
+    <!-- 为了避免每次切换路由时重新加载路由影响速度，加上<keep-alive>后让路由先缓存-->
     <keep-alive>
       <router-view />
     </keep-alive>
