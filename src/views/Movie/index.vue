@@ -69,6 +69,7 @@ export default {
 }
 #movie {
   width: 100%;
+  height: 100%;
   #movie-header {
     width: 100%;
     height: 50px;

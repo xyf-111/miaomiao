@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id='mine'>
     <Header title='我的喵喵'></Header>
     <Login />
     <TabBar></TabBar>
@@ -21,4 +21,8 @@ export default {
 </script>
 
 <style lang="scss">
+#mine {
+  width: 100%;
+  height: 100%;
+}
 </style>

@@ -1,8 +1,7 @@
 <template>
   <div id='detail' class='slide-enter-active'>
     <Header title='影片详情'>
-      <span @touchstart='handleToBack'>
-        《
+      <span @touchstart='handleToBack' class='iconfont iconfanhui'>
       </span>
     </Header>
     <Loading v-if='isLoading'></Loading>
@@ -116,6 +115,7 @@ export default {
     left: 0px;
     width: 50px;
     height: 50px;
+    font-size: 30px;
   }
   .movieImg {
     width: 100%;
@@ -123,6 +123,7 @@ export default {
     overflow: hidden;
     img {
       width: 100%;
+      margin-top: -50px;
     }
   }
   .movieInfo {

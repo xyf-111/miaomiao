@@ -66,12 +66,13 @@ export default {
   // filters: {
   //   actorFilter: function () {}
   // },
-  // 在使用keepalive时，如果使用mounted的话，则页面切换时不会重新渲染数据，所以应该换成activated
+
   data() {
     return {
       previd: -1
     }
   },
+  // 在使用keepalive时，如果使用mounted的话，则页面切换时不会重新渲染数据，所以应该换成activated
   activated() {
     var id = this.$store.state.city.id
     if (id === this.previd) {
@@ -104,7 +105,7 @@ export default {
         tap: true,
         click: true
       })
-    }, 200)
+    }, 500)
   },
   // beforeUpdate() {
   //   this.$nextTick(() => {
